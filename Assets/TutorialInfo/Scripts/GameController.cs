@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 public class GameController : MonoBehaviour
 {
-    public GameObject hazard;
+    public GameObject [] hazards;
     public Vector3 spawnValues;
     public int hazardCount;
     public float spawnWait;
@@ -13,12 +13,17 @@ public class GameController : MonoBehaviour
     public Text ScoreText;
     public Text restartText;
     public Text gameOverText;
+    public Text winText;
+    private bool win;
     private bool gameOver;
     private bool restart;
 private int score;
     void Start()
     {   gameOver = false;
     restart =false;
+    win = false;
+
+    winText.text = "";
     restartText.text = "";
     gameOverText.text ="";
         score = 0;
@@ -31,7 +36,7 @@ private int score;
             Application.Quit();
         if (restart)
         {
-            if (Input.GetKeyDown (KeyCode.R))
+            if (Input.GetKeyDown (KeyCode.P))
             {
                 Application.LoadLevel (Application.loadedLevel);
 
@@ -45,6 +50,7 @@ private int score;
         {
             for (int i = 0; i< hazardCount; i++)
             {
+            GameObject hazard = hazards [Random.Range (0,hazards.Length)];    
             Vector3 spawnPosition = new Vector3 (Random.Range (-spawnValues.x, spawnValues.x), spawnValues.y, spawnValues.z);
             Quaternion spawnRotation = Quaternion.identity;
             Instantiate(hazard, spawnPosition, spawnRotation);
@@ -53,7 +59,7 @@ private int score;
             yield return new WaitForSeconds (waveWait);
             if (gameOver)
             {
-                restartText.text = "Press 'R' for Restart";
+                restartText.text = "Press 'P' for Restart";
                 restart = true;
                 break;
             }
@@ -66,13 +72,19 @@ UpdateScore();
 }
 
 void UpdateScore()
-{
-ScoreText.text = "Score: " + score;
-}
+ {
+        ScoreText.text = "Score: " + score;
+        if (score >= 100)
+          {
+            winText.text = "You win! GAME CREATED BY Daniel Vanderbrink";
+            gameOver = true;
+            restart = true;
+           }
+      }
 
 public void GameOver ()
 {
-    gameOverText.text = "Game Over!";
+    gameOverText.text = "Game Over! GAME CREATED BY Daniel Vanderbrink";
     gameOver = true;
     }
 }
